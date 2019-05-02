@@ -67,6 +67,7 @@ public class UDP {
 		// this is restarting so set the restarted state to true and initialize the client port to 
 		// show that there is no port (0 works well for this)
 		// ...
+		restarted = true;
 	}
 	
 	public void close() {
