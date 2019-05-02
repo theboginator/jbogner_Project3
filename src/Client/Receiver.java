@@ -22,7 +22,7 @@ public class Receiver {
 		// type: REQ, starting at sequence number: 0
 		// the length should be the length of the filename (fn)
 		// and the data is the byte array from the filename (getBytes)
-		packet = new Packet(1,1, fn.length(), fn.getBytes());
+		packet = new Packet(0, 0, fn.length(), fn.getBytes());
 
 		try {
 			receiveFile(packet);
