@@ -15,33 +15,32 @@ public class UDP {
 
 	public void createService() throws SocketException {
 		logger.info(restarted ? "Res" : "S" + "starting Server on Port: " + Settings.PORT);
-		
+		restarted = true;
 		// Set the restarted state to true because this has just started.
 		// also create a DatagramSocket object for the server socket on the PORT in the settings file
-		// ...  
-		// ...
+		serverSocket = new DatagramSocket(Common.Settings.PORT);
+
 	}
 
 	public byte[] getPacket(int timeout) throws SocketTimeoutException {
 		byte[] receiveData = new byte[1024];
 		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-		try {
-			serverSocket.setSoTimeout(timeout);
-			// Receive the packet from the server socket
-			// hint: server socket has a receive method to help
-			logger.received(receiveData);
-			if (clientPort == 0) {
-				// store the client's IP address and port from the received Packet
-				// ...
+        try {
+            serverSocket.setSoTimeout(timeout);
+            serverSocket.receive(receivePacket);
+            logger.received(receiveData);
+            if (clientPort == 0) {
+                receivePacket.getAddress();
+                receivePacket.getPort();
 
-				logger.info("Established connection with: " + clientAddress + ", Port:" + clientPort);
-			}
-		} catch (SocketTimeoutException e) {
-			throw e;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			logger.error("Unable to get data from socket.", e);
-		}
+                logger.info("Established connection with: " + clientAddress + ", Port:" + clientPort);
+            }
+        } catch (SocketTimeoutException e) {
+            throw e;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            logger.error("Unable to get data from socket.", e);
+        }
 		// get the client message
 		return receiveData;
 	}
@@ -57,6 +56,7 @@ public class UDP {
 			// Send the sendPacket data!  
 			// hint: serverSocket has a 'send' method to help with this
 			// ...
+			serverSocket.send(sendPacket);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			logger.error("Unable to send reply", e);
@@ -71,7 +71,7 @@ public class UDP {
 	
 	public void close() {
 		// Close any open sockets
-		// ...
+		serverSocket.close();
 	}
 	
 	public void stats() {

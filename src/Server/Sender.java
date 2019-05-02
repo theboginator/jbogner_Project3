@@ -50,7 +50,8 @@ public class Sender {
 		System.out.println("Data transmission complete, waiting for outstanding ACKs");
 		// Wait for transfer to complete.  
 		// Keep looping checking packetManager.done, as long as that is false, we should process an ACK
-		while (/*...*/) {
+		while (!packetManager.done()) {
+            packetManager.processAck();
 			// hint: process the ack here
 		}
 		

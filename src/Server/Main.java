@@ -39,32 +39,35 @@ public class Main {
 		
 		// We need a way to loop getting data and when we're done know to stop.  So create
 		// a boolean for that purpose
-		// hint: boolean ...
+		boolean moreData = true;
 		try {
 			// Create a variable to hold the file sender object but initialize it to null
 			Sender sender = null;
 			
 			// Loop while that boolean we created is true.  When we're done it will be false and
 			// we can cleanup
-			//while (...) {
+			while (moreData) {
 				// Create a new udp socket from the UDP class
-				// hint: UDP udpSocket = new ...
+				UDP udpSocket = new UDP();
 			
 				// Create the service for the udpSocket
-				// ...
-			
+				try {
+					udpSocket.createService();
+				}catch (SocketException e) {
+					logger.info("Socket Exception Error");
+				}
+
 				try {
 					// Create a byte array buffer and initialize it to the udpSocket's packet with a timeout
 					// of 0.
-					// hint: byte[] buf ...
-					
+                        byte[] buf = udpSocket.getPacket(0);
+                        receivedPacket = new Packet(buf);
 					// convert the buf into a new Packet and store it in the receivedPacket
-					// hint: receivedPacket = ...
 
 					// If the received packet's type is not a request (REQ), then generate an error
-					// if (...) {
+					if (receivedPacket.getType() != 1) {
 						(new PacketManager(udpSocket)).send(PacketType.ERR,
-								"Received " + PacketType.toString(receivedPacket.getType()) + 
+								"Received " + PacketType.toString(receivedPacket.getType()) +
 								", not sure what that command does at this stage.");
 						continue;
 					}
@@ -73,17 +76,21 @@ public class Main {
 				}
 				
 				// Create an actual Sender object from the udp socket
-				//sender = 
+				sender = new Sender(udpSocket);
 
 				try {
 					// Tell the sender object to send the file!  To do this, get the data from
 					// the receivePacket.  This will get a byte array.  Convert that to a new String,
 					// and pass that to the sendFile method in the sender object.
-					// ...
+					byte[] sendArray = receivedPacket.getBytes();
+					//convert to String
+                    String sendData = sendArray.toString();
+                    sender.sendFile(sendData);
 					
 					// when done, close the udpSocket
 					// ...
-					
+					udpSocket.close();
+					moreData = false;
 					// Set the loop variable to False to stop looping
 					// ...				
 				} catch (IOException e) {
@@ -97,9 +104,9 @@ public class Main {
 				
 			}
 		// Process/catch/print other errors
-		} catch (SocketException e) {
+		 //catch (SocketException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (WrongPacketTypeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
